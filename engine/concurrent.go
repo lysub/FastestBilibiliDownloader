@@ -2,6 +2,7 @@ package engine
 
 import (
 	"context"
+	"log"
 	"sync"
 )
 
@@ -104,6 +105,8 @@ func CreateWorker(out chan ParseResult, in chan *Request, notifier WorkerReadyNo
 func work(request *Request) (ParseResult, error) {
 	content, ok := request.FetchFun(request.Url)
 	if ok != nil {
+		log.Println(request.Url)
+		log.Println(ok.Error())
 		return ParseResult{}, ok
 	}
 	result := request.ParseFunction(content, request.Url)

@@ -3,12 +3,13 @@ package parser
 import (
 	"crypto/md5"
 	"fmt"
-	"github.com/tidwall/gjson"
 	"simple-golang-crawler/engine"
 	"simple-golang-crawler/fetcher"
 	"simple-golang-crawler/model"
 	"simple-golang-crawler/tool"
 	"strconv"
+
+	"github.com/tidwall/gjson"
 )
 
 var _entropy = "rbMCKn@KuamXWlPMoJGsKcbiJKUfkPF_8dABscJntvqhRSETg"

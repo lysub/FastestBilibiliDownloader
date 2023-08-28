@@ -3,9 +3,10 @@ package fetcher
 import (
 	"bufio"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
+	"simple-golang-crawler/common"
 	"time"
 
 	"golang.org/x/net/html/charset"
@@ -26,7 +27,7 @@ func DefaultFetcher(url string) ([]byte, error) {
 		log.Fatalf("fetch err while request :%s,and the err is %s", url, err)
 		return nil, err
 	}
-	request.Header.Add("User-Agent", "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:60.0) Gecko/20100101 Firefox/60.0")
+	request.Header.Add("User-Agent", common.UserAgent)
 
 	resp, err := client.Do(request)
 	if err != nil {
@@ -43,7 +44,7 @@ func DefaultFetcher(url string) ([]byte, error) {
 	e := determineEncoding(bodyReader)
 	utf8Reader := transform.NewReader(bodyReader, e.NewDecoder())
 	defer resp.Body.Close()
-	return ioutil.ReadAll(utf8Reader)
+	return io.ReadAll(utf8Reader)
 }
 
 func determineEncoding(reader *bufio.Reader) encoding.Encoding {

@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"simple-golang-crawler/common"
 	"simple-golang-crawler/model"
 	"simple-golang-crawler/tool"
 	"time"
@@ -24,12 +25,21 @@ func GenVideoFetcher(video *model.Video) FetchFun {
 		<-_rateLimiter.C
 		client := http.Client{CheckRedirect: genCheckRedirectfun(referer)}
 
+		aidPath := tool.GetAidFileDownloadDir(video.ParCid.ParAid.Aid, video.ParCid.ParAid.Title)
+		filename := fmt.Sprintf("[%d]%s.flv", video.ParCid.Page, video.ParCid.Part)
+		// 判断文件是否存在，允许断点续传
+		_, err = os.Stat(filepath.Join(aidPath, filename))
+		if err == nil {
+			log.Println("跳过文件：" + video.ParCid.ParAid.Title + "\\" + filename)
+			return nil, nil
+		}
+
 		request, err := http.NewRequest("GET", url, nil)
 		if err != nil {
 			log.Fatalln(url, err)
 			return nil, err
 		}
-		request.Header.Set("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:56.0) Gecko/20100101 Firefox/56.0")
+		request.Header.Set("User-Agent", common.UserAgent)
 		request.Header.Set("Accept", "*/*")
 		request.Header.Set("Accept-Language", "en-US,en;q=0.5")
 		request.Header.Set("Accept-Encoding", "gzip, deflate, br")
@@ -50,8 +60,6 @@ func GenVideoFetcher(video *model.Video) FetchFun {
 		}
 		defer resp.Body.Close()
 
-		aidPath := tool.GetAidFileDownloadDir(video.ParCid.ParAid.Aid, video.ParCid.ParAid.Title)
-		filename := fmt.Sprintf("%d_%d.flv", video.ParCid.Page, video.Order)
 		file, err := os.Create(filepath.Join(aidPath, filename))
 		if err != nil {
 			log.Fatalln(err)

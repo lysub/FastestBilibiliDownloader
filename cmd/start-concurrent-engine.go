@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"regexp"
+	"simple-golang-crawler/common"
 	"simple-golang-crawler/engine"
 	"simple-golang-crawler/parser"
 	"simple-golang-crawler/persist"
@@ -15,10 +16,17 @@ import (
 )
 
 var urlInput string
+var workerCount int
 
 func init() {
 	flag.StringVar(&urlInput, "url", "", "video url")
+	flag.IntVar(&workerCount, "w", 1, "worker count")
+	flag.StringVar(&common.UserAgent, "agent", "", "url agent")
+	flag.IntVar(&common.UserAgentIndex, "ai", 0, "default agent index")
+	flag.IntVar(&common.CD, "cd", 0, "cooldown")
 	flag.Parse()
+
+	common.Init()
 }
 
 func main() {
@@ -90,7 +98,7 @@ func main() {
 	}
 
 	queueScheduler := scheduler.NewConcurrentScheduler()
-	conEngine := engine.NewConcurrentEngine(30, queueScheduler, itemChan)
+	conEngine := engine.NewConcurrentEngine(workerCount, queueScheduler, itemChan)
 	log.Println("开始下载...")
 	conEngine.Run(req)
 	wg.Wait()

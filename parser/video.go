@@ -1,7 +1,6 @@
 package parser
 
 import (
-
 	"simple-golang-crawler/engine"
 	"simple-golang-crawler/fetcher"
 	"simple-golang-crawler/model"
