@@ -24,6 +24,7 @@ func init() {
 	flag.StringVar(&common.UserAgent, "agent", "", "url agent")
 	flag.IntVar(&common.UserAgentIndex, "ai", 0, "default agent index")
 	flag.IntVar(&common.CD, "cd", 0, "cooldown")
+	flag.IntVar(&common.SkipChildCount, "sc", 0, "skip child count")
 	flag.Parse()
 
 	common.Init()
