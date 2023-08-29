@@ -3,6 +3,7 @@ package parser
 import (
 	"crypto/md5"
 	"fmt"
+	"simple-golang-crawler/common"
 	"simple-golang-crawler/engine"
 	"simple-golang-crawler/fetcher"
 	"simple-golang-crawler/model"
@@ -45,6 +46,10 @@ func GenGetAidChildrenParseFun(videoAid *model.VideoAid) engine.ParseFunc {
 
 			urlApi := fmt.Sprintf(_playApiTemp, params, chksum)
 
+			if common.SkipChildCount > 0 {
+				common.SkipChildCount -= 1
+				continue
+			}
 			req := engine.NewRequest(urlApi, GenVideoDownloadParseFun(videoCid), fetcher.DefaultFetcher)
 			retParseResult.Requests = append(retParseResult.Requests, req)
 		}
